@@ -12,23 +12,41 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\MetaController;
 use App\Http\Controllers\RequirmentformController;
 use App\Http\Controllers\QueryController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// Home Page
-Route::get('/', function () {
-    return view('welcome');
-});
+// // Home Page
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-// Dashboard
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// // Dashboard
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Authenticated User Routes
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// // Authenticated User Routes
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+// ✅ Register Routes
+Route::get('/register', function () {
+    return view('register');
+})->name('register.form');
+Route::post('/register', [AuthController::class, 'register'])->name('register.user');
+
+// ✅ Login Routes
+Route::get('/login', function () {
+    return view('login'); // Proper login page
+})->name('login');
+
+// ✅ Dashboard Route with Auth Middleware
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])
+        ->name('dashboard')
+        ->middleware('admin'); // Apply Admin Middleware
 });
 
 require __DIR__.'/auth.php';
@@ -46,8 +64,7 @@ Route::get('/career-details', [WebsiteController::class, 'career_details'])->nam
 Route::get('/contact', [WebsiteController::class, 'contact'])->name('contacts');
 Route::get('/query', [WebsiteController::class, 'query'])->name('query');
 
-// ✅ Admin Routes
-Route::get('/dashboard',[AdminController::class,'dashboard']); 
+
 
 // ✅ Dynamic Index Page Content Routes
 Route::get('/indexview',[IndexController::class,'index']);
